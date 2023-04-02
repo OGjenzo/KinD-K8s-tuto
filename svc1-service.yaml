@@ -1,0 +1,57 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: svc1-app
+  labels:
+    app: svc1
+    svc: testsvc
+spec:
+  containers:
+  - name: bar-app
+    image: nginx:1.22.0
+    volumeMounts:
+    - name: config
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+  volumes:
+  - name: config
+    configMap:
+      name: svc1-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: svc1-config
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Cool HTML Code</title>
+        <style>
+          /* Style the text to make it look cool */
+          h1 {
+            font-size: 48px;
+            color: #333;
+            text-shadow: 2px 2px #ccc;
+            text-align: center;
+            margin-top: 50px;
+          }
+        </style>
+      </head>
+      <body>
+        <!-- Display the sentence inside an h1 heading -->
+        <h1>svc1 works that's so cool</h1>
+      </body>
+    </html>
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc1-service
+spec:
+  selector:
+    app: svc1
+  ports:
+  - port: 80
